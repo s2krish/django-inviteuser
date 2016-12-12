@@ -1,0 +1,10 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}
+
+Hello {{inviter}},
+
+User ({{ email }}) has accepted your invitation on {{ site_name }}.
+
+{% endblocktrans %}
+{% endautoescape %}

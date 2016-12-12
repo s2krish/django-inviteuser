@@ -1,0 +1,15 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}
+
+Hello,
+
+You ({{ email }}) have been invited to join {{manager}}'s  team {{team_name}} on {{ site_name }}
+
+Messages:
+{{message}}
+
+If you'd like to join, please go to {{ invite_url }}.
+
+{% endblocktrans %}
+{% endautoescape %}

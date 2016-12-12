@@ -1,0 +1,4 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}Accepted: invitation to join {{ site_name }}{% endblocktrans %}
+{% endautoescape %}

@@ -10,7 +10,7 @@ try:
 except ImportError:
     from django.utils.encoding import force_unicode as force_text
 
-from .app_settings import app_settings
+from .conf import settings
 from .utils import import_attribute
 
 
@@ -25,12 +25,15 @@ class BaseInvitationsAdapter(object):
         request.session['account_verified_email'] = None
         return ret
 
-    def format_email_subject(self, subject):
-        prefix = app_settings.EMAIL_SUBJECT_PREFIX
-        if prefix is None:
-            site = Site.objects.get_current()
-            prefix = "[{name}] ".format(name=site.name)
-        return prefix + force_text(subject)
+    def set_invitation(self, request, invitation_id):
+        request.session['invitation_id'] = invitation_id
+
+    def get_invitation(self, request):
+        ret = request.session.get('invitation_id')
+        return ret
+
+    def unset_invitation(self, request):
+        request.session['invitation_id'] = None
 
     def render_mail(self, template_prefix, email, context):
         """
@@ -41,7 +44,6 @@ class BaseInvitationsAdapter(object):
                                    context)
         # remove superfluous line breaks
         subject = " ".join(subject.splitlines()).strip()
-        subject = self.format_email_subject(subject)
 
         bodies = {}
         for ext in ['html', 'txt']:
@@ -76,9 +78,6 @@ class BaseInvitationsAdapter(object):
         if hasattr(request, 'session') and request.session.get(
                 'account_verified_email'):
             return True
-        elif app_settings.INVITATION_ONLY is True:
-            # Site is ONLY open for invites
-            return False
         else:
             # Site is open to signup
             return True
@@ -110,13 +109,4 @@ class BaseInvitationsAdapter(object):
 
 
 def get_invitations_adapter():
-    # Compatibility with legacy allauth only version.
-    LEGACY_ALLAUTH = hasattr(settings, 'ACCOUNT_ADAPTER') and \
-        settings.ACCOUNT_ADAPTER == 'invitations.models.InvitationsAdapter'
-    if LEGACY_ALLAUTH:
-        # defer to allauth
-        from allauth.account.adapter import get_adapter
-        return get_adapter()
-    else:
-        # load an adapter from elsewhere
-        return import_attribute(app_settings.ADAPTER)()
+    return import_attribute(settings.INVITATIONS_ADAPTER)()

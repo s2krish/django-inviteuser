@@ -3,7 +3,7 @@
 <h4 class="title">{% trans "Invite" %}</h4>
 <span class="alert alert-info">{% trans "Please add an email below. The user will recieve an email with instructions." %}</span>
 
-<form id="invite-form" method="POST" action="{% url 'invitations:send-invite' %}">
+<form id="invite-form" method="POST" action="{% url 'inviteuser:send-invite' %}">
   {% csrf_token %}
   <div class="form-group">
       <input type="text" name="email" id="id_email" value="{{ form.email.value }}" class="form-control validate-email" placeholder="{% trans 'Email' %}">
